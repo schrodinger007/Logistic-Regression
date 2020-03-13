@@ -1,0 +1,79 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+%matplotlib inline
+plt.style.use('seaborn')
+dfx=pd.read_csv(r'C:\Users\91914\Downloads\Training Data (3)\Logistic_X_Train.csv')
+dfy=pd.read_csv(r'C:\Users\91914\Downloads\Training Data (3)\Logistic_Y_Train.csv')
+x_=pd.read_csv(r'C:\Users\91914\Downloads\Test Cases (1)\Logistic_X_Test.csv')
+X.head()
+y.head()
+# Training Data 
+X_train=dfx.values
+y_train=dfy.values
+
+# Convert to numpy arrays 
+X_train=np.array(X_train)
+y_train=np.array(y_train)
+u = X_train.mean(axis=0)
+std = X_train.std(axis=0)
+
+x= (X_train-u)/std
+ones=np.ones((X_train.shape[0],1))
+X_train=np.hstack((ones,X_train))
+print(X_train.shape)
+Ones=np.ones((1000,1))
+
+x_=np.hstack((Ones,x_))
+plt.style.use("dark_background")
+plt.scatter(X_train[:,1],X_train[:,2],X_train[:,3],c=y_train[:,0],cmap=plt.cm.coolwarm_r)
+plt.xlabel('x1')
+plt.ylabel('x2')
+plt.legend()
+plt.show()
+plt.show()
+def getypred(theta,X_train):
+    return 1/(1.0 + np.exp(-(np.dot(X_train,theta))))
+
+def predict(theta,X_train):
+    y_pred = getypred(theta,X_train)
+    result = np.zeros((y_pred.shape))
+    result[y_pred>0.5]=1
+    return result
+
+def error(X_train,y_train,theta):
+    y_ = getypred(theta,X_train)
+    
+    e=-(np.sum(y*np.log(y_)+(1-y_train)*np.log(1-y_)))
+    m = X_train.shape[0]
+    return e/m
+
+def getGrad(X_train,y_train,theta):
+    y_ = getypred(theta,X_train)
+    grad = np.dot(X_train.T,(y_-y_train))
+    return grad
+def gradDescent(X_train,y_train,lr,maxItr):
+    theta = np.zeros((X_train.shape[1],1))
+    error_list = [ ]
+    
+    for i in range(maxItr): 
+        grad = getGrad(X_train,y_train,theta)
+        e = error(X_train,y_train,theta) 
+        theta = theta - lr*grad
+        error_list.append(e)
+        
+    return theta,error_list
+theta,error_list=gradDescent(X_train,y_train,0.01,200)
+theta
+plt.plot(error_list)
+plt.style.use("seaborn")
+plt.scatter(X_train[:,1],X_train[:,2],X_train[:,3],c=y_train[:,0],cmap=plt.cm.coolwarm_r)
+x1 = np.linspace(-3,+3,5)
+x2 = -(theta[0] + theta[1]*x1)/theta[2]
+plt.plot(x1,x2)
+plt.show()
+
+result=predict(theta,x_)
+
+np.set_printoptions(formatter={'float_kind':'{:f}'.format})
+result.shape
